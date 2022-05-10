@@ -49,6 +49,7 @@ public class UI : MonoBehaviour
     {
         _score += 10 * multiplier.Multiplier;
         PlayerPrefs.SetInt("score", _score);
+        PlayerPrefs.SetString("level", nextScene);
         PlayerPrefs.Save();
         
         // Display.

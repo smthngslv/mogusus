@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -65,8 +66,8 @@ public class Player : MonoBehaviour
 
         if (Input.touchCount > 0)
         {
-            // Calculate position between 0 and 1.
-            float positionX = Input.GetTouch(0).deltaPosition.x / Screen.width;
+            // Calculate position between 0 and 1. Use 75% of screen's width.
+            float positionX = Input.GetTouch(0).deltaPosition.x / (Screen.width * 0.75f);
             
             // Update.
             Vector3 position = tower.transform.localPosition;
@@ -74,19 +75,19 @@ public class Player : MonoBehaviour
             tower.transform.localPosition = position;
         }
         
-        // if (Input.GetKey(KeyCode.LeftArrow))
-        // {
-        //     Vector3 position = tower.transform.localPosition;
-        //     position.x = 
-        //     tower.transform.localPosition = position;
-        // }
-        //
-        // if (Input.GetKey(KeyCode.RightArrow))
-        // {
-        //     Vector3 position = tower.transform.localPosition;
-        //     position.x = Mathf.Clamp(position.x + velocity * Time.deltaTime, 0.0f, 2.5f);
-        //     tower.transform.localPosition = position;
-        // }
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            Vector3 position = tower.transform.localPosition;
+            position.x = Mathf.Clamp(position.x - velocity * Time.deltaTime, 0.0f, 2.5f);
+            tower.transform.localPosition = position;
+        }
+        
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            Vector3 position = tower.transform.localPosition;
+            position.x = Mathf.Clamp(position.x + velocity * Time.deltaTime, 0.0f, 2.5f);
+            tower.transform.localPosition = position;
+        }
         
         if (_isRotating)
         {
@@ -106,11 +107,18 @@ public class Player : MonoBehaviour
 
     internal void CreateCube()
     {
-        GameObject cube = GetComponentInChildren<PlayerPiece>().gameObject;
+        // Top cube.
+        GameObject cube = GetComponentInChildren<Animator>().transform.parent.gameObject;
         
-        // Create a cube a bit higher.
+        // Create at the same position.
+        GameObject newCube = Instantiate(cube, cube.transform.position, cube.transform.rotation, tower.transform);
+        // Remove character.
+        Destroy(newCube.GetComponentInChildren<Animator>().gameObject);
+        
+        Score++;
+        // Move a cube a bit higher.
         Vector3 position = cube.transform.position;
-        position.y += Score++ * 0.5f + 0.25f;
-        Instantiate(cube, position,  cube.transform.rotation, tower.transform);
+        position.y += 0.75f;
+        cube.transform.position = position;
     }
 }

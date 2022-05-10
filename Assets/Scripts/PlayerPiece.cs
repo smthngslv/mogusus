@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class PlayerPiece : MonoBehaviour
@@ -23,6 +24,15 @@ public class PlayerPiece : MonoBehaviour
         if (other.transform.TryGetComponent(out Obstacle _))
         {
             --_player.Score;
+
+            var character = GetComponentInChildren<Animator>();
+            if (character != null && _player.Score > 0)
+            {
+                // Move character to the latest.
+                character.transform.parent = transform.parent.GetComponentsInChildren<PlayerPiece>().Last().transform;
+                character.transform.localPosition = new Vector3(0.25f, 0.5f, -0.25f);
+            }
+            
             transform.parent = null;
         }
     }
@@ -47,9 +57,9 @@ public class PlayerPiece : MonoBehaviour
         }
         
         // Avoid too fast falling.
-        if (_isInLava && _rigidbody.velocity.y < -1.0f)
+        if (_isInLava && _rigidbody.velocity.y < -0.5f)
         {
-            _rigidbody.velocity = new Vector3(0.0f, -1.0f, 0.0f);
+            _rigidbody.velocity = new Vector3(0.0f, -0.5f, 0.0f);
         }
     }
 }
